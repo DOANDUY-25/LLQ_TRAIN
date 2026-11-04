@@ -1,0 +1,207 @@
+<div class="list-page fade-in-up">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-nav">
+    <span class="breadcrumb-link">Tham số</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+    <span class="breadcrumb-current">Cấu phần xử lý</span>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1 class="page-title">Tham số cấu phần xử lý</h1>
+    </div>
+    <div class="page-header-right">
+      <button tuiButton appearance="primary" size="m" (click)="onCreate()" *ngIf="hasRole('MAKER')"
+        id="btn-create-component">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Thêm mới
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Panel -->
+  <div class="search-card">
+    <div class="search-card-header">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <span>Bộ lọc tìm kiếm</span>
+    </div>
+    <div class="search-card-body">
+      <div class="filter-grid-4">
+
+        <!-- Mã cấu phần -->
+        <div class="filter-field">
+          <label class="filter-label">Mã cấu phần</label>
+          <div class="multi-select-wrapper">
+            <select [(ngModel)]="searchFilter.componentCodes" multiple class="form-control multi-select"
+              id="filter-component-code" size="1">
+              <option *ngFor="let opt of componentCodeOptions" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+            <div class="select-placeholder" *ngIf="!searchFilter.componentCodes?.length">Chọn mã cấu phần</div>
+            <div class="select-count" *ngIf="searchFilter.componentCodes?.length">
+              <span tuiBadge size="s" appearance="accent">{{ searchFilter.componentCodes?.length }} đã chọn</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tên cấu phần -->
+        <div class="filter-field">
+          <label class="filter-label">Tên cấu phần</label>
+          <div class="multi-select-wrapper">
+            <select [(ngModel)]="searchFilter.componentNames" multiple class="form-control multi-select"
+              id="filter-component-name" size="1">
+              <option *ngFor="let opt of componentNameOptions" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+            <div class="select-placeholder" *ngIf="!searchFilter.componentNames?.length">Chọn tên cấu phần</div>
+            <div class="select-count" *ngIf="searchFilter.componentNames?.length">
+              <span tuiBadge size="s" appearance="accent">{{ searchFilter.componentNames?.length }} đã chọn</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trạng thái tham số -->
+        <div class="filter-field">
+          <label class="filter-label">Trạng thái tham số</label>
+          <div class="multi-select-wrapper">
+            <select [(ngModel)]="searchFilter.statuses" multiple class="form-control multi-select" id="filter-status"
+              size="1">
+              <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+            <div class="select-placeholder" *ngIf="!searchFilter.statuses?.length">Tất cả trạng thái</div>
+            <div class="select-count" *ngIf="searchFilter.statuses?.length">
+              <span tuiBadge size="s" appearance="accent">{{ searchFilter.statuses?.length }} đã chọn</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trạng thái hoạt động -->
+        <div class="filter-field">
+          <label class="filter-label">Trạng thái hoạt động</label>
+          <div class="multi-select-wrapper">
+            <select [(ngModel)]="searchFilter.isActives" multiple class="form-control multi-select"
+              id="filter-is-active" size="1">
+              <option *ngFor="let opt of isActiveOptions" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+            <div class="select-placeholder" *ngIf="!searchFilter.isActives?.length">Tất cả</div>
+            <div class="select-count" *ngIf="searchFilter.isActives?.length">
+              <span tuiBadge size="s" appearance="accent">{{ searchFilter.isActives?.length }} đã chọn</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="filter-actions">
+        <button tuiButton appearance="secondary" size="s" (click)="onResetFilter()" id="btn-reset-filter">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 .49-3.28" />
+          </svg>
+          Làm mới
+        </button>
+        <button tuiButton appearance="primary" size="s" (click)="onSearch()" id="btn-search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          Tìm kiếm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Actions Bar -->
+  <div class="bulk-bar" *ngIf="selectedComponents.length > 0">
+    <div class="bulk-bar-left">
+      <div class="bulk-count">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        Đã chọn <span tuiBadge size="s" appearance="accent">{{ selectedComponents.length }}</span> bản ghi
+      </div>
+    </div>
+    <div class="bulk-bar-right">
+      <button tuiButton appearance="flat" size="s" (click)="bulkSubmit()" [disabled]="!canBulkAction('submit')"
+        *ngIf="hasRole('MAKER')" id="btn-bulk-submit">Gửi duyệt</button>
+
+      <button tuiButton appearance="positive" size="s" (click)="bulkApprove()" [disabled]="!canBulkAction('approve')"
+        *ngIf="hasRole('CHECKER')" id="btn-bulk-approve">Phê duyệt</button>
+
+      <button tuiButton appearance="destructive" size="s" (click)="bulkReject()" [disabled]="!canBulkAction('reject')"
+        *ngIf="hasRole('CHECKER')" id="btn-bulk-reject">Từ chối</button>
+
+      <button tuiButton appearance="secondary" size="s" (click)="bulkCancel()" [disabled]="!canBulkAction('cancel')"
+        *ngIf="hasRole('CHECKER')" id="btn-bulk-cancel">Hủy duyệt</button>
+    </div>
+  </div>
+
+  <!-- Data Table Card -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <div class="table-card-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6" />
+          <line x1="8" y1="12" x2="21" y2="12" />
+          <line x1="8" y1="18" x2="21" y2="18" />
+          <line x1="3" y1="6" x2="3.01" y2="6" />
+          <line x1="3" y1="12" x2="3.01" y2="12" />
+          <line x1="3" y1="18" x2="3.01" y2="18" />
+        </svg>
+        Danh sách cấu phần xử lý
+        <span tuiBadge size="s" appearance="neutral" class="total-badge">{{ totalElements }}</span>
+      </div>
+      <button tuiButton appearance="secondary" size="s" (click)="onExportExcel()" id="btn-export">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
+        Xuất Excel
+      </button>
+    </div>
+
+    <tui-loader [showLoader]="loading" [overlay]="true">
+      <div class="ag-grid-container" style="width: 100%; height: 500px;">
+        <ag-grid-angular style="width: 100%; height: 100%;" class="ag-theme-quartz" [rowData]="components"
+          [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [rowSelection]="'multiple'"
+          [suppressRowClickSelection]="true" [pagination]="false" (selectionChanged)="onSelectionChanged($event)"
+          (rowDoubleClicked)="onRowDoubleClicked($event)" (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+      </div>
+    </tui-loader>
+
+    <!-- Pagination Footer -->
+    <div class="table-footer" *ngIf="totalElements > 0">
+      <div class="pagination-info">
+        Hiển thị <strong>{{ currentPage * pageSize + 1 }}</strong> –
+        <strong>{{ Math.min((currentPage + 1) * pageSize, totalElements) }}</strong>
+        trong tổng số <strong>{{ totalElements }}</strong> bản ghi
+      </div>
+
+      <div class="pagination-controls">
+        <select [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)" class="page-size-select"
+          id="page-size-select">
+          <option [ngValue]="10">10 / trang</option>
+          <option [ngValue]="20">20 / trang</option>
+          <option [ngValue]="50">50 / trang</option>
+          <option [ngValue]="100">100 / trang</option>
+        </select>
+
+        <tui-pagination [length]="totalPages" [index]="currentPage" (indexChange)="onPageChange($event)">
+        </tui-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal Overlay -->
+<app-detail-modal *ngIf="showDetailModal && modalComponentId" [componentId]="modalComponentId"
+  (closed)="onModalClosed($event)"></app-detail-modal>

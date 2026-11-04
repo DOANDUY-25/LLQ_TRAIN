@@ -1,0 +1,159 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="gc-form" autocomplete="off">
+
+  <!-- Hàng 1: Danh mục theo nhóm | Giá trị thành phần | Tên thành phần | Cấu phần xử lý -->
+  <div class="form-row-4">
+
+    <!-- Danh mục theo nhóm (PARAM_TYPE) -->
+    <div class="form-group">
+      <label class="form-label" for="paramType">
+        Danh mục theo nhóm <span class="req">*</span>
+      </label>
+      <input
+        id="paramType"
+        type="text"
+        formControlName="paramType"
+        class="form-control"
+        [class.input-error]="isFieldError('paramType')"
+        placeholder="Nhập nội dung"
+        maxlength="255"
+        (blur)="checkDuplicate()"
+      />
+      <div class="field-error" *ngIf="isFieldError('paramType')">{{ getErrorMessage('paramType') }}</div>
+    </div>
+
+    <!-- Giá trị thành phần (PARAM_VALUE) -->
+    <div class="form-group">
+      <label class="form-label" for="paramValue">
+        Giá trị thành phần <span class="req">*</span>
+      </label>
+      <div class="input-wrap">
+        <input
+          id="paramValue"
+          type="text"
+          formControlName="paramValue"
+          class="form-control"
+          [class.input-error]="isFieldError('paramValue')"
+          placeholder="Nhập nội dung"
+          maxlength="255"
+          (blur)="checkDuplicate()"
+        />
+        <!-- Spinner trùng -->
+        <span class="input-suffix checking" *ngIf="checkingDuplicate" title="Đang kiểm tra...">
+          <svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 1 1-6.22-8.56"/>
+          </svg>
+        </span>
+      </div>
+      <div class="field-error" *ngIf="isFieldError('paramValue')">{{ getErrorMessage('paramValue') }}</div>
+      <div class="field-error" *ngIf="isDuplicate && !isFieldError('paramName')">
+        Tham số đã tồn tại với cùng Loại và Cấu phần
+      </div>
+    </div>
+
+    <!-- Tên thành phần (PARAM_NAME) -->
+    <div class="form-group">
+      <label class="form-label" for="paramName">
+        Tên thành phần <span class="req">*</span>
+      </label>
+      <input
+        id="paramName"
+        type="text"
+        formControlName="paramName"
+        class="form-control"
+        [class.input-error]="isFieldError('paramName')"
+        placeholder="Nhập nội dung"
+        maxlength="255"
+        (blur)="checkDuplicate()"
+      />
+      <div class="field-error" *ngIf="isFieldError('paramName')">{{ getErrorMessage('paramName') }}</div>
+    </div>
+
+    <!-- Cấu phần xử lý (COMPONENT_CODE) -->
+    <div class="form-group">
+      <label class="form-label" for="componentCode">
+        Cấu phần xử lý <span class="req">*</span>
+      </label>
+      <div class="select-wrap">
+        <select
+          id="componentCode"
+          formControlName="componentCode"
+          class="form-control"
+          [class.input-error]="isFieldError('componentCode')"
+          (change)="checkDuplicate()"
+        >
+          <option value="">Chọn giá trị</option>
+          <option *ngFor="let c of componentCodeOptions" [value]="c">{{ c }}</option>
+        </select>
+        <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="field-error" *ngIf="isFieldError('componentCode')">{{ getErrorMessage('componentCode') }}</div>
+    </div>
+
+  </div>
+
+  <!-- Hàng 2: Ngày hiệu lực | Ngày hết hiệu lực -->
+  <div class="form-row-2">
+
+    <div class="form-group">
+      <label class="form-label" for="effectiveDate">
+        Ngày hiệu lực <span class="req">*</span>
+      </label>
+      <div class="date-wrap">
+        <input
+          id="effectiveDate"
+          type="datetime-local"
+          formControlName="effectiveDate"
+          class="form-control"
+          [class.input-error]="isFieldError('effectiveDate')"
+          (change)="validateEffectiveDate()"
+          (blur)="validateEffectiveDate()"
+        />
+        <svg class="date-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div class="field-error" *ngIf="isFieldError('effectiveDate')">{{ getErrorMessage('effectiveDate') }}</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="endEffectiveDate">Ngày hết hiệu lực</label>
+      <div class="date-wrap">
+        <input
+          id="endEffectiveDate"
+          type="datetime-local"
+          formControlName="endEffectiveDate"
+          class="form-control"
+          [class.input-error]="isFieldError('endEffectiveDate')"
+          (change)="validateEndDate()"
+          (blur)="validateEndDate()"
+        />
+        <svg class="date-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div class="field-error" *ngIf="isFieldError('endEffectiveDate')">{{ getErrorMessage('endEffectiveDate') }}</div>
+    </div>
+
+  </div>
+
+  <!-- Hàng 3: Mô tả -->
+  <div class="form-group full-width">
+    <label class="form-label" for="description">Mô tả</label>
+    <textarea
+      id="description"
+      formControlName="description"
+      class="form-control"
+      [class.input-error]="isFieldError('description')"
+      rows="3"
+      placeholder="Nhập nội dung (tùy chọn, tối đa 4000 ký tự)"
+      maxlength="4000"
+    ></textarea>
+    <div class="char-hint">{{ charCount('description') }}/4000</div>
+    <div class="field-error" *ngIf="isFieldError('description')">{{ getErrorMessage('description') }}</div>
+  </div>
+
+</form>

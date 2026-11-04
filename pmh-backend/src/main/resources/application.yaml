@@ -1,0 +1,56 @@
+server:
+  port: 8899
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@10.10.0.202:1521:orcl
+    username: DEMO
+    password: DEMO
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  security:
+    jwt:
+      secret: ${JWT_SECRET:pmhSecretKeyForJwtTokenMustBeAtLeast256BitsLongForHMACSHA256}
+      expiration-ms: 1800000 # 30 phút cho Access Token
+      refresh-expiration-ms: 604800000 # 7 ngày cho Refresh Token
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+    consumer:
+      group-id: export-worker-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+# Cấu hình riêng của ứng dụng
+app:
+  jwt:
+    secret: ${JWT_SECRET:pmhSecretKeyForJwtTokenMustBeAtLeast256BitsLongForHMACSHA256}
+    expiration-ms: 1800000 # 30 phút cho Access Token
+    refresh-expiration-ms: 604800000 # 7 ngày cho Refresh Token
+  kafka:
+    export-topic: export_jobs
+
+# MinIO
+minio:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket: export-files

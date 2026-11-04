@@ -1,0 +1,32 @@
+.clone-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.clone-container .page-header {
+  margin-bottom: 24px;
+}
+.clone-container .page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+.clone-container .page-header .subtitle {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+.clone-container .form-wrapper {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.clone-container .loading-container {
+  text-align: center;
+  padding: 60px;
+}
+.clone-container .loading-container .spinner {
+  font-size: 16px;
+  color: #666;
+}

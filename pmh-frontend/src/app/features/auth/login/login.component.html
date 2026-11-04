@@ -1,0 +1,107 @@
+<div class="auth-container">
+  <div class="auth-backdrop-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h2>Hệ Thống PMH</h2>
+      <p class="subtitle">Quản lý tham số cấu phần xử lý tập trung</p>
+    </div>
+
+    <!-- Alert Error Message -->
+    <div class="alert alert-error" *ngIf="errorMessage">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <div class="input-wrapper" [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <input 
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            placeholder="Nhập tên đăng nhập..."
+            autocomplete="username"
+          />
+        </div>
+        <div class="field-error" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          Vui lòng nhập tên đăng nhập
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <div class="input-wrapper" [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            id="password" 
+            formControlName="password" 
+            placeholder="Nhập mật khẩu..."
+            autocomplete="current-password"
+          />
+          <button type="button" class="btn-toggle-eye" (click)="togglePassword()">
+            <svg *ngIf="!showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg *ngIf="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+        <div class="field-error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Vui lòng nhập mật khẩu (tối thiểu 4 ký tự)
+        </div>
+      </div>
+
+      <!-- Form Options -->
+      <div class="form-options">
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="rememberMe" />
+          <span class="checkmark"></span>
+          <span class="label-text">Ghi nhớ đăng nhập</span>
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button tuiButton appearance="primary" size="l" type="submit" style="width: 100%; border-radius: 8px;" [disabled]="loading">
+        <span *ngIf="!loading">Đăng nhập hệ thống</span>
+        <span *ngIf="loading" class="spinner-wrapper">
+          <span class="spinner"></span>
+          Đang xác thực...
+        </span>
+      </button>
+
+      <!-- Footer switch link -->
+      <div class="auth-footer">
+        <span>Chưa có tài khoản?</span>
+        <a routerLink="/register">Đăng ký tài khoản mới</a>
+      </div>
+    </form>
+  </div>
+</div>

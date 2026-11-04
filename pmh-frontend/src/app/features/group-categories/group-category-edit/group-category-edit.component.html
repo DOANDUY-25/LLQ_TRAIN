@@ -1,0 +1,68 @@
+<div class="page-wrapper fade-in-up">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-nav">
+    <span class="breadcrumb-link" routerLink="/group-categories">Tham số</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <span class="breadcrumb-link" routerLink="/group-categories">Tham số danh mục theo nhóm</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <span class="breadcrumb-current">Sửa</span>
+  </div>
+
+  <!-- Header -->
+  <div class="inner-page-header">
+    <div class="inner-header-left">
+      <button class="btn-back-arrow" (click)="onCancel()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+      <h1 class="inner-page-title">Sửa tham số danh mục theo nhóm</h1>
+    </div>
+    <div class="inner-header-actions">
+      <button tuiButton appearance="secondary" size="s" (click)="onCancel()">Hủy</button>
+      <button tuiButton appearance="secondary" size="s" (click)="onSave()" [disabled]="loading">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Lưu
+      </button>
+      <button tuiButton appearance="primary" size="s" (click)="onSaveAndSubmit()" [disabled]="loading">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+        Lưu và gửi duyệt
+      </button>
+    </div>
+  </div>
+
+  <!-- Skeleton khi load -->
+  <div class="form-card" *ngIf="loading && !initialData">
+    <div class="skeleton-loader">
+      <div class="skeleton-row">
+        <div class="skeleton-field"></div><div class="skeleton-field"></div>
+        <div class="skeleton-field"></div><div class="skeleton-field"></div>
+      </div>
+      <div class="skeleton-row">
+        <div class="skeleton-field"></div><div class="skeleton-field"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card" *ngIf="initialData">
+    <app-group-category-form
+      #formRef
+      mode="edit"
+      [initialData]="initialData"
+      [currentStatus]="currentStatus"
+      (formSubmit)="onFormSubmit($event)"
+      (formSubmitAndApprove)="onFormSubmitAndApprove($event)"
+      (formCancel)="onCancel()"
+    ></app-group-category-form>
+  </div>
+
+  <div class="page-loading-overlay" *ngIf="loading && initialData">
+    <div class="loading-content"><div class="spinner"></div><span>Đang xử lý...</span></div>
+  </div>
+</div>

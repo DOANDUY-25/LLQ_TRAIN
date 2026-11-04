@@ -1,0 +1,179 @@
+<!-- Loading state -->
+<div class="loading-page fade-in-up" *ngIf="loading">
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+    <span>Đang tải dữ liệu...</span>
+  </div>
+</div>
+
+<!-- Detail content -->
+<div class="detail-page fade-in-up" *ngIf="!loading && detailData">
+  <!-- Page Header -->
+  <div class="inner-page-header">
+    <button class="btn-back" (click)="onBack()" id="btn-back-detail">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+      </svg>
+      Quay lại
+    </button>
+    <div class="inner-header-info">
+      <div class="detail-title-row">
+        <h1 class="inner-page-title">{{ detailData.currentData.componentCode }}</h1>
+        <span class="badge" [ngClass]="'badge-' + getStatusColor(detailData.currentData.status)">
+          {{ getStatusLabel(detailData.currentData.status) }}
+        </span>
+        <span class="active-badge" [class.is-active]="detailData.currentData.isActive === 1">
+          <span class="dot"></span>
+          {{ detailData.currentData.isActive === 1 ? 'Hoạt động' : 'Không hoạt động' }}
+        </span>
+      </div>
+      <p class="inner-page-subtitle">{{ detailData.currentData.componentName }}</p>
+    </div>
+    <div class="detail-header-actions">
+      <button class="btn btn-sm btn-secondary" (click)="onViewHistory()" id="btn-history">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Lịch sử
+      </button>
+      <button class="btn btn-sm btn-outline" (click)="onClone()" id="btn-clone">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        Sao chép
+      </button>
+      <button class="btn btn-sm btn-primary" (click)="onEdit()" id="btn-edit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Sửa
+      </button>
+    </div>
+  </div>
+
+  <!-- Alert: có dữ liệu mới chờ duyệt -->
+  <div class="detail-alert" *ngIf="hasNewData">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <div>
+      <strong>Có dữ liệu đang chờ duyệt.</strong>
+      Bản ghi này đã được chỉnh sửa và đang chờ phê duyệt. Dữ liệu mới sẽ được áp dụng sau khi Phê duyệt.
+    </div>
+  </div>
+
+  <!-- Compare view -->
+  <div class="compare-container" *ngIf="hasNewData">
+    <div class="compare-grid">
+      <!-- Current data -->
+      <div class="compare-card">
+        <div class="compare-card-header current">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Dữ liệu hiện tại
+        </div>
+        <div class="compare-card-body">
+          <div class="info-row"><span class="info-label">Mã cấu phần</span><span class="info-value code">{{ detailData.currentData.componentCode }}</span></div>
+          <div class="info-row"><span class="info-label">Tên cấu phần</span><span class="info-value">{{ detailData.currentData.componentName }}</span></div>
+          <div class="info-row"><span class="info-label">Chuẩn tin điện</span><span class="info-value muted">{{ detailData.currentData.messageType || '—' }}</span></div>
+          <div class="info-row"><span class="info-label">Tên kết nối</span><span class="info-value muted">{{ detailData.currentData.connectionMethod || '—' }}</span></div>
+          <div class="info-row"><span class="info-label">Token/Ký số</span><span class="info-value">{{ detailData.currentData.checkToken === 'Y' ? 'Có' : 'Không' }}</span></div>
+          <div class="info-row"><span class="info-label">Ngày hiệu lực</span><span class="info-value">{{ detailData.currentData.effectiveDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span></div>
+          <div class="info-row"><span class="info-label">Ngày hết HLực</span><span class="info-value">{{ detailData.currentData.endEffectiveDate ? (detailData.currentData.endEffectiveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</span></div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="compare-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+
+      <!-- New data -->
+      <div class="compare-card new-data">
+        <div class="compare-card-header new">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="12" y2="12"/>
+            <line x1="15" y1="15" x2="12" y2="12"/>
+          </svg>
+          Dữ liệu mới (chờ duyệt)
+        </div>
+        <div class="compare-card-body">
+          <div class="info-row"><span class="info-label">Mã cấu phần</span><span class="info-value code">{{ detailData.newData!.componentCode }}</span></div>
+          <div class="info-row" [class.changed-row]="detailData.currentData.componentName !== detailData.newData!.componentName"><span class="info-label">Tên cấu phần</span><span class="info-value">{{ detailData.newData!.componentName }}</span></div>
+          <div class="info-row" [class.changed-row]="detailData.currentData.messageType !== detailData.newData!.messageType"><span class="info-label">Chuẩn tin điện</span><span class="info-value muted">{{ detailData.newData!.messageType || '—' }}</span></div>
+          <div class="info-row" [class.changed-row]="detailData.currentData.connectionMethod !== detailData.newData!.connectionMethod"><span class="info-label">Tên kết nối</span><span class="info-value muted">{{ detailData.newData!.connectionMethod || '—' }}</span></div>
+          <div class="info-row" [class.changed-row]="detailData.currentData.checkToken !== detailData.newData!.checkToken"><span class="info-label">Token/Ký số</span><span class="info-value">{{ detailData.newData!.checkToken === 'Y' ? 'Có' : 'Không' }}</span></div>
+          <div class="info-row" [class.changed-row]="detailData.currentData.effectiveDate !== detailData.newData!.effectiveDate"><span class="info-label">Ngày hiệu lực</span><span class="info-value">{{ detailData.newData!.effectiveDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span></div>
+          <div class="info-row" [class.changed-row]="detailData.currentData.endEffectiveDate !== detailData.newData!.endEffectiveDate"><span class="info-label">Ngày hết HLực</span><span class="info-value">{{ detailData.newData!.endEffectiveDate ? (detailData.newData!.endEffectiveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Single view -->
+  <div class="detail-content" *ngIf="!hasNewData">
+    <!-- Thông tin cấu phần -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <div class="section-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </div>
+        <span>Thông tin cấu phần</span>
+      </div>
+      <div class="detail-card-body">
+        <div class="info-grid">
+          <div class="info-row"><span class="info-label">Mã cấu phần</span><span class="info-value code">{{ detailData.currentData.componentCode }}</span></div>
+          <div class="info-row"><span class="info-label">Tên cấu phần</span><span class="info-value">{{ detailData.currentData.componentName }}</span></div>
+          <div class="info-row"><span class="info-label">Chuẩn tin điện</span><span class="info-value muted">{{ detailData.currentData.messageType || '—' }}</span></div>
+          <div class="info-row"><span class="info-label">Tên kết nối</span><span class="info-value muted">{{ detailData.currentData.connectionMethod || '—' }}</span></div>
+          <div class="info-row"><span class="info-label">Kiểm tra Token/ký số</span>
+            <span class="info-value">
+              <span *ngIf="detailData.currentData.checkToken === 'Y'" style="color:#16a34a;display:flex;align-items:center;gap:4px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Có
+              </span>
+              <span *ngIf="detailData.currentData.checkToken !== 'Y'" style="color:#94a3b8">Không</span>
+            </span>
+          </div>
+          <div class="info-row"><span class="info-label">Ngày hiệu lực</span><span class="info-value">{{ detailData.currentData.effectiveDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span></div>
+          <div class="info-row"><span class="info-label">Ngày hết hiệu lực</span><span class="info-value">{{ detailData.currentData.endEffectiveDate ? (detailData.currentData.endEffectiveDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</span></div>
+          <div class="info-row full-span" *ngIf="detailData.currentData.description">
+            <span class="info-label">Mô tả</span>
+            <span class="info-value description">{{ detailData.currentData.description }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thông tin kiểm toán -->
+    <div class="detail-card audit-card">
+      <div class="detail-card-header">
+        <div class="section-icon audit">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <span>Thông tin kiểm toán</span>
+      </div>
+      <div class="detail-card-body">
+        <div class="info-grid">
+          <div class="info-row"><span class="info-label">Người tạo</span><span class="info-value">{{ detailData.currentData.createdBy || '—' }}</span></div>
+          <div class="info-row"><span class="info-label">Ngày tạo</span><span class="info-value">{{ detailData.currentData.createdDate ? (detailData.currentData.createdDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</span></div>
+          <div class="info-row"><span class="info-label">Người cập nhật</span><span class="info-value">{{ detailData.currentData.updatedBy || '—' }}</span></div>
+          <div class="info-row"><span class="info-label">Ngày cập nhật</span><span class="info-value">{{ detailData.currentData.updatedDate ? (detailData.currentData.updatedDate | date: 'dd/MM/yyyy HH:mm:ss') : '—' }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

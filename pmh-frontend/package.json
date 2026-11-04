@@ -1,0 +1,43 @@
+{
+  "name": "pmh-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^17.0.0",
+    "@angular/cdk": "^17.3.10",
+    "@angular/common": "^17.0.0",
+    "@angular/compiler": "^17.0.0",
+    "@angular/core": "^17.0.0",
+    "@angular/forms": "^17.0.0",
+    "@angular/platform-browser": "^17.0.0",
+    "@angular/platform-browser-dynamic": "^17.0.0",
+    "@angular/router": "^17.0.0",
+    "@taiga-ui/cdk": "^4.103.0",
+    "@taiga-ui/core": "^4.103.0",
+    "@taiga-ui/event-plugins": "^4.7.0",
+    "@taiga-ui/icons": "^4.103.0",
+    "@taiga-ui/kit": "^4.103.0",
+    "@taiga-ui/layout": "^4.103.0",
+    "@taiga-ui/legacy": "^4.103.0",
+    "@taiga-ui/polymorpheus": "^4.10.0",
+    "ag-grid-angular": "^31.3.4",
+    "ag-grid-community": "^31.3.4",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.2"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.0.0",
+    "@angular/cli": "^17.0.0",
+    "@angular/compiler-cli": "^17.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "~5.2.2"
+  }
+}

@@ -1,0 +1,105 @@
+<div class="diff-modal-backdrop" *ngIf="isOpen" (click)="onClose()">
+  <div class="diff-modal-card" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="diff-modal-header">
+      <div class="header-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+        </svg>
+        <span>{{ title }}</span>
+      </div>
+      <button class="btn-close" (click)="onClose()" title="Đóng">&times;</button>
+    </div>
+
+    <!-- Body / Bảng đối chiếu -->
+    <div class="diff-modal-body">
+      <div class="diff-notice">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span>Bản ghi này có dữ liệu sửa đổi đang chờ duyệt. Vui lòng đối chiếu các trường khác biệt dưới đây:</span>
+      </div>
+
+      <div class="diff-table-wrapper">
+        <table class="diff-table">
+          <thead>
+            <tr>
+              <th style="width: 28%">Tên trường thông tin</th>
+              <th style="width: 33%">Dữ liệu hiện tại (DB)</th>
+              <th style="width: 33%">Dữ liệu đề xuất mới (NEW_DATA)</th>
+              <th style="width: 6%" class="text-center">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let f of fields" [class.diff-row-changed]="isChanged(f.key)">
+              <td class="field-name">
+                <strong>{{ f.label }}</strong>
+                <span class="field-key">({{ f.key }})</span>
+              </td>
+              <td class="old-value">
+                <span>{{ formatValue(currentData[f.key], f.isDate) }}</span>
+              </td>
+              <td class="new-value">
+                <span *ngIf="newData && newData[f.key] !== undefined">
+                  {{ formatValue(newData[f.key], f.isDate) }}
+                </span>
+                <span *ngIf="!newData || newData[f.key] === undefined" class="text-muted">— Giữ nguyên —</span>
+              </td>
+              <td class="text-center">
+                <span tuiBadge size="s" appearance="accent" *ngIf="isChanged(f.key)">Đổi mới</span>
+                <span tuiBadge size="s" appearance="neutral" *ngIf="!isChanged(f.key)">Giống</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Khung nhập lý do từ chối -->
+      <div class="reject-box" *ngIf="showRejectInput">
+        <label class="reject-label">Lý do từ chối <span class="text-danger">*</span></label>
+        <textarea
+          [(ngModel)]="rejectReason"
+          rows="3"
+          class="form-control"
+          placeholder="Nhập chi tiết lý do từ chối để người tạo (Maker) nắm thông tin sửa đổi..."
+        ></textarea>
+        <div class="reject-actions">
+          <button tuiButton appearance="secondary" size="s" (click)="onToggleRejectInput()">Hủy</button>
+          <button tuiButton appearance="destructive" size="s" (click)="onConfirmReject()" [disabled]="actionLoading">
+            Xác nhận từ chối
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="diff-modal-footer">
+      <button tuiButton appearance="secondary" size="s" (click)="onClose()">Đóng</button>
+
+      <div class="action-buttons" *ngIf="canApprove || canReject">
+        <button
+          tuiButton
+          appearance="destructive"
+          size="s"
+          *ngIf="canReject && !showRejectInput"
+          (click)="onToggleRejectInput()"
+          [disabled]="actionLoading"
+        >
+          Từ chối duyệt
+        </button>
+
+        <button
+          tuiButton
+          appearance="positive"
+          size="s"
+          *ngIf="canApprove"
+          (click)="onApprove()"
+          [disabled]="actionLoading"
+        >
+          <span *ngIf="actionLoading">Đang xử lý...</span>
+          <span *ngIf="!actionLoading">Phê duyệt thay đổi</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

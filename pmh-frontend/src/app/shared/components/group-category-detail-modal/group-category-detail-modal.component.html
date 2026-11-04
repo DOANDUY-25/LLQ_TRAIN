@@ -1,0 +1,183 @@
+<!-- Backdrop -->
+<div class="modal-backdrop" (click)="close(false)"></div>
+
+<!-- Dialog -->
+<div class="modal-dialog" role="dialog" aria-modal="true">
+
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="modal-title-row">
+      <span class="modal-title">Xem chi tiết</span>
+      <span *ngIf="current"
+            class="status-badge status-{{ getStatusColor(current.status) }}">
+        <span class="status-dot"></span>
+        {{ current.status }} - {{ getStatusLabel(current.status) }}
+      </span>
+    </div>
+    <button class="btn-close" (click)="close(false)" aria-label="Đóng">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="modal-loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <span>Đang tải dữ liệu...</span>
+  </div>
+
+  <!-- Body -->
+  <div class="modal-body" *ngIf="!loading && detail">
+
+    <div class="compare-panels">
+
+      <!-- Panel: Dữ liệu cũ -->
+      <div class="data-panel">
+        <div class="panel-header">
+          <span class="panel-dot old-dot"></span>
+          <span class="panel-title">Dữ liệu cũ</span>
+        </div>
+        <div class="panel-body">
+          <ng-container *ngIf="hasNewData && current; else currentAsNew">
+            <div class="field-row"><span class="flabel">Tên thành phần</span><span class="fval">{{ current.paramName || '—' }}</span></div>
+            <div class="field-row"><span class="flabel">Giá trị thành phần</span><span class="fval">{{ current.paramValue || '—' }}</span></div>
+            <div class="field-row"><span class="flabel">Danh mục theo nhóm</span><span class="fval">{{ current.paramType || '—' }}</span></div>
+            <div class="field-row"><span class="flabel">Cấu phần xử lý</span><span class="fval">{{ current.componentCode || '—' }}</span></div>
+            <div class="field-row"><span class="flabel">Ngày hiệu lực</span><span class="fval">{{ formatDate(current.effectiveDate) }}</span></div>
+            <div class="field-row"><span class="flabel">Ngày hết hiệu lực</span><span class="fval">{{ formatDate(current.endEffectiveDate) }}</span></div>
+            <div class="field-row"><span class="flabel">Mô tả</span><span class="fval">{{ current.description || '—' }}</span></div>
+          </ng-container>
+
+          <!-- Khi tạo mới (status=NEW), cột dữ liệu cũ trống -->
+          <ng-template #currentAsNew>
+            <div class="field-row empty"><span class="flabel">Tên thành phần</span></div>
+            <div class="field-row empty"><span class="flabel">Giá trị thành phần</span></div>
+            <div class="field-row empty"><span class="flabel">Danh mục theo nhóm</span></div>
+            <div class="field-row empty"><span class="flabel">Cấu phần xử lý</span></div>
+            <div class="field-row empty"><span class="flabel">Ngày hiệu lực</span></div>
+            <div class="field-row empty"><span class="flabel">Ngày hết hiệu lực</span></div>
+            <div class="field-row empty"><span class="flabel">Mô tả</span></div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Panel: Dữ liệu mới -->
+      <div class="data-panel">
+        <div class="panel-header">
+          <span class="panel-dot new-dot"></span>
+          <span class="panel-title">Dữ liệu mới</span>
+        </div>
+        <div class="panel-body">
+          <!-- Có newData (sửa chờ duyệt) -->
+          <ng-container *ngIf="newData as nd">
+            <div class="field-row" [class.changed]="isChanged('paramName')">
+              <span class="flabel">Tên thành phần</span>
+              <span class="fval" [class.changed-val]="isChanged('paramName')">{{ nd.paramName || '—' }}</span>
+            </div>
+            <div class="field-row" [class.changed]="isChanged('paramValue')">
+              <span class="flabel">Giá trị thành phần</span>
+              <span class="fval" [class.changed-val]="isChanged('paramValue')">{{ nd.paramValue || '—' }}</span>
+            </div>
+            <div class="field-row" [class.changed]="isChanged('paramType')">
+              <span class="flabel">Danh mục theo nhóm</span>
+              <span class="fval" [class.changed-val]="isChanged('paramType')">{{ nd.paramType || '—' }}</span>
+            </div>
+            <div class="field-row" [class.changed]="isChanged('componentCode')">
+              <span class="flabel">Cấu phần xử lý</span>
+              <span class="fval" [class.changed-val]="isChanged('componentCode')">{{ nd.componentCode || '—' }}</span>
+            </div>
+            <div class="field-row" [class.changed]="isChanged('effectiveDate')">
+              <span class="flabel">Ngày hiệu lực</span>
+              <span class="fval" [class.changed-val]="isChanged('effectiveDate')">{{ formatDate(nd.effectiveDate) }}</span>
+            </div>
+            <div class="field-row" [class.changed]="isChanged('endEffectiveDate')">
+              <span class="flabel">Ngày hết hiệu lực</span>
+              <span class="fval" [class.changed-val]="isChanged('endEffectiveDate')">{{ formatDate(nd.endEffectiveDate) }}</span>
+            </div>
+            <div class="field-row" [class.changed]="isChanged('description')">
+              <span class="flabel">Mô tả</span>
+              <span class="fval" [class.changed-val]="isChanged('description')">{{ nd.description || '—' }}</span>
+            </div>
+          </ng-container>
+
+          <!-- Không có newData → hiển thị currentData ở cột phải -->
+          <ng-container *ngIf="!newData && current">
+            <div class="field-row"><span class="flabel">Tên thành phần</span><span class="fval">{{ current.paramName || '—' }}</span></div>
+            <div class="field-row"><span class="flabel">Giá trị thành phần</span><span class="fval">{{ current.paramValue || '—' }}</span></div>
+            <div class="field-row"><span class="flabel">Danh mục theo nhóm</span><span class="fval">{{ current.paramType || '—' }}</span></div>
+            <div class="field-row"><span class="flabel">Cấu phần xử lý</span><span class="fval">{{ current.componentCode || '—' }}</span></div>
+            <div class="field-row"><span class="flabel">Ngày hiệu lực</span><span class="fval">{{ formatDate(current.effectiveDate) }}</span></div>
+            <div class="field-row"><span class="flabel">Ngày hết hiệu lực</span><span class="fval">{{ formatDate(current.endEffectiveDate) }}</span></div>
+            <div class="field-row"><span class="flabel">Mô tả</span><span class="fval">{{ current.description || '—' }}</span></div>
+          </ng-container>
+        </div>
+      </div>
+
+    </div><!-- /compare-panels -->
+
+    <!-- Lý do từ chối -->
+    <div class="reject-box" *ngIf="showRejectInput">
+      <label class="reject-label">Lý do từ chối <span class="req">*</span></label>
+      <textarea
+        class="reject-textarea"
+        [(ngModel)]="rejectReason"
+        rows="3"
+        placeholder="Nhập lý do từ chối..."
+        maxlength="500"
+      ></textarea>
+    </div>
+
+  </div><!-- /modal-body -->
+
+  <!-- Footer -->
+  <div class="modal-footer" *ngIf="!loading && current">
+
+    <!-- NEW / REJECTED / CANCELLED → Xóa + Gửi duyệt -->
+    <ng-container *ngIf="status === GroupCategoryStatus.NEW || status === GroupCategoryStatus.REJECTED || status === GroupCategoryStatus.CANCELLED">
+      <button tuiButton
+              appearance="destructive"
+              size="s"
+              (click)="onDelete()"
+              [disabled]="actionLoading"
+              *ngIf="current.isDisplay === 1">
+        Xóa
+      </button>
+      <button tuiButton appearance="primary" size="s" (click)="onSubmitApproval()" [disabled]="actionLoading">
+        <span *ngIf="!actionLoading">Gửi duyệt</span>
+        <span *ngIf="actionLoading">Đang xử lý...</span>
+      </button>
+    </ng-container>
+
+    <!-- PENDING → Từ chối + Phê duyệt (CHỈ CHECKER) -->
+    <ng-container *ngIf="status === GroupCategoryStatus.PENDING && isChecker()">
+      <ng-container *ngIf="!showRejectInput">
+        <button tuiButton appearance="secondary" size="s" (click)="onShowReject()" [disabled]="actionLoading">Từ chối</button>
+        <button tuiButton appearance="positive" size="s" (click)="onApprove()" [disabled]="actionLoading">
+          <span *ngIf="!actionLoading">Phê duyệt</span>
+          <span *ngIf="actionLoading">Đang xử lý...</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="showRejectInput">
+        <button tuiButton appearance="secondary" size="s" (click)="onCancelReject()" [disabled]="actionLoading">Hủy</button>
+        <button tuiButton
+                appearance="destructive"
+                size="s"
+                (click)="onConfirmReject()"
+                [disabled]="actionLoading || !rejectReason.trim()">
+          <span *ngIf="!actionLoading">Xác nhận từ chối</span>
+          <span *ngIf="actionLoading">Đang xử lý...</span>
+        </button>
+      </ng-container>
+    </ng-container>
+
+    <!-- APPROVED → Hủy phê duyệt -->
+    <ng-container *ngIf="status === GroupCategoryStatus.APPROVED">
+      <button tuiButton appearance="secondary" size="s" (click)="onCancelApproval()" [disabled]="actionLoading">
+        <span *ngIf="!actionLoading">Hủy phê duyệt</span>
+        <span *ngIf="actionLoading">Đang xử lý...</span>
+      </button>
+    </ng-container>
+  </div>
+
+</div><!-- /modal-dialog -->
